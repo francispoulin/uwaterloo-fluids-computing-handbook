@@ -1,0 +1,112 @@
+\section{Environment Modules}
+
+Many software packages on Pelee and Rondeau are managed using
+\emph{environment modules}.
+
+Modules allow users to select software versions without manually modifying environment variables.
+
+\subsection{Listing Available Modules}
+
+Display all available modules:
+
+\begin{lstlisting}
+module avail
+\end{lstlisting}
+
+Example software available through modules includes
+
+\begin{itemize}
+\item CUDA
+\item Julia
+\item MATLAB
+\item Anaconda
+\item OpenMPI
+\item ParaView
+\end{itemize}
+
+\subsection{Loading a Module}
+
+Load Julia:
+
+\begin{lstlisting}
+module load julia
+\end{lstlisting}
+
+or load a specific version:
+
+\begin{lstlisting}
+module load julia/1.10.8
+\end{lstlisting}
+
+\subsection{Checking Loaded Modules}
+
+Show loaded modules:
+
+\begin{lstlisting}
+module list
+\end{lstlisting}
+
+\subsection{Unloading a Module}
+
+Unload Julia:
+
+\begin{lstlisting}
+module unload julia
+\end{lstlisting}
+
+Unload all modules:
+
+\begin{lstlisting}
+module purge
+\end{lstlisting}
+
+\subsection{Common Examples}
+
+Load CUDA:
+
+\begin{lstlisting}
+module load cuda/12.3.2
+\end{lstlisting}
+
+Load OpenMPI:
+
+\begin{lstlisting}
+module load openmpi/4.1.7-with-cuda
+\end{lstlisting}
+
+Load Julia:
+
+\begin{lstlisting}
+module load julia/1.10.8
+\end{lstlisting}
+
+\subsection{Finding Software}
+
+Search for a package:
+
+\begin{lstlisting}
+module spider julia
+\end{lstlisting}
+
+or
+
+\begin{lstlisting}
+module spider cuda
+\end{lstlisting}
+
+\subsection{Exercise}
+
+Load Julia and verify the version:
+
+\begin{lstlisting}
+module load julia/1.10.8
+julia --version
+\end{lstlisting}
+
+\subsection{A Common Mistake} 
+
+Modules are usually reset when you start a new login session. If a command suddenly disappears after logging in, check whether the required module has been loaded: 
+
+\begin{lstlisting} 
+module list 
+\end{lstlisting}

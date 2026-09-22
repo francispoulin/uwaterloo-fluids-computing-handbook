@@ -1,0 +1,45 @@
+\section{Connecting to a Server}
+
+\subsection{What is SSH?}
+
+SSH (Secure Shell) is the standard method for connecting to a remote Linux machine.
+
+\begin{lstlisting}
+ssh username@pelee.math.private.uwaterloo.ca
+\end{lstlisting}
+
+\begin{lstlisting}
+ssh username@rondeau.math.private.uwaterloo.ca
+\end{lstlisting}
+
+\subsection{Windows}
+Open Windows Terminal and run the SSH command.
+
+\subsection{macOS and Linux}
+Open a terminal and run the SSH command.
+
+\textbf{Note:} Nothing appears on the screen while typing your password. This is normal.
+
+\subsection{First Login}
+
+Type \texttt{yes} when asked whether you trust the host.
+
+\subsection{Successful Login}
+
+\begin{lstlisting}
+username@pelee:~$
+\end{lstlisting}
+
+\subsection{Logging Out}
+
+\begin{lstlisting}
+exit
+\end{lstlisting}
+
+\subsection{Exercise}
+
+\begin{enumerate}
+\item Connect to Pelee.
+\item Run \texttt{pwd}.
+\item Disconnect using \texttt{exit}.
+\end{enumerate}

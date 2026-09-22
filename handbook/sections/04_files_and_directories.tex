@@ -1,0 +1,69 @@
+\section{Files and Directories}
+
+Files and directories are the basic building blocks of a Linux filesystem.
+
+\subsection{Creating Files}
+
+Create an empty file:
+
+\begin{lstlisting}
+touch notes.txt
+\end{lstlisting}
+
+Verify that it exists:
+
+\begin{lstlisting}
+ls
+\end{lstlisting}
+
+\subsection{Copying Files}
+
+Copy a file:
+
+\begin{lstlisting}
+cp notes.txt backup.txt
+\end{lstlisting}
+
+The original file is unchanged.
+
+\subsection{Moving and Renaming Files}
+
+Rename a file:
+
+\begin{lstlisting}
+mv notes.txt notes_old.txt
+\end{lstlisting}
+
+Move a file into another directory:
+
+\begin{lstlisting}
+mv notes_old.txt data/
+\end{lstlisting}
+
+\subsection{Deleting Files}
+
+Delete a file:
+
+\begin{lstlisting}
+rm notes.txt
+\end{lstlisting}
+
+\textbf{Warning:} Deleted files cannot usually be recovered.
+
+\subsection{Working with Directories}
+
+Copy a directory and its contents:
+
+\begin{lstlisting}
+cp -r project project_backup
+\end{lstlisting}
+
+Delete a directory and its contents:
+
+\begin{lstlisting}
+rm -r project_backup
+\end{lstlisting}
+
+\subsection{Exercise}
+
+Create a file called \texttt{notes.txt}. Copy it, rename it, and then delete the copy.

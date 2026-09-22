@@ -1,0 +1,172 @@
+\section{Multi-GPU Computing with Python} 
+
+Many Python applications can use multiple GPUs simultaneously. 
+
+Typical examples include: 
+
+\begin{itemize} 
+\item PyTorch 
+\item TensorFlow 
+\item JAX 
+\item MPI-based scientific computing 
+\end{itemize} 
+
+\subsection{Loading Required Modules} 
+
+Load the required software: 
+
+\begin{lstlisting} 
+module load cuda/12.3.2 
+module load anaconda3/2024.02.1 
+module load openmpi/4.1.7-with-cuda 
+\end{lstlisting} 
+
+Verify: 
+
+\begin{lstlisting} 
+module list 
+\end{lstlisting}
+
+\subsection{Installing Required Packages} 
+
+If necessary: 
+
+\begin{lstlisting} 
+pip install mpi4py 
+pip install torch 
+\end{lstlisting}
+
+\subsection{Testing CUDA} 
+
+Create a file called \texttt{test-cuda.py}: 
+
+\begin{lstlisting} 
+import torch 
+print(torch.cuda.is_available()) 
+print(torch.cuda.device_count()) 
+\end{lstlisting}
+
+Run: 
+
+\begin{lstlisting} 
+python test_cuda.py 
+\end{lstlisting} 
+
+Expected output: 
+\begin{lstlisting} 
+True 
+4 
+\end{lstlisting}
+
+\subsection{Verifying GPU Assignment} 
+
+Create a file called \texttt{test-multigpu.py}: 
+
+\begin{lstlisting} 
+from mpi4py import MPI 
+import torch 
+comm = MPI.COMM_WORLD 
+rank = comm.rank 
+torch.cuda.set_device(rank) 
+print( f"Rank {rank} " f"using GPU " f"
+{torch.cuda.current_device()}" ) 
+\end{lstlisting}
+
+Run four MPI ranks: 
+
+\begin{lstlisting} 
+mpiexec -n 4 python test-multigpu.py 
+\end{lstlisting}
+
+\subsection{Selecting GPUs} 
+
+A program can be restricted to specific GPUs using \texttt{CUDA\_VISIBLE\_DEVICES}. 
+
+Use only GPU 0: 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=0 python script.py 
+\end{lstlisting} 
+
+Use GPUs 1 and 2: 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=1,2 python script.py 
+\end{lstlisting} 
+
+This is useful on shared servers where multiple users may be using GPUs simultaneously. 
+
+\subsection{MPI with Python} 
+
+Many scientific Python applications use MPI through \texttt{mpi4py}. 
+
+Install: 
+
+\begin{lstlisting} 
+pip install mpi4py 
+\end{lstlisting} 
+
+Create a file called \texttt{test-mpi.py}: 
+
+\begin{lstlisting} 
+from mpi4py import MPI 
+
+comm = MPI.COMM_WORLD 
+
+print( f"Rank {comm.rank} " f"of {comm.size}" ) 
+\end{lstlisting} 
+
+Run: 
+
+\begin{lstlisting} 
+mpiexec -n 4 python test_mpi.py 
+\end{lstlisting} 
+
+Expected output: 
+
+\begin{lstlisting} 
+Rank 0 of 4 
+Rank 1 of 4 
+Rank 2 of 4 
+Rank 3 of 4 
+\end{lstlisting} 
+
+\subsection{Multi-GPU PyTorch} 
+
+PyTorch supports multiple GPUs using Distributed Data Parallel (DDP). 
+
+Check visible GPUs: 
+
+\begin{lstlisting} 
+import torch 
+
+print(torch.cuda.device_count()) 
+\end{lstlisting} 
+
+A typical launch command is: 
+
+\begin{lstlisting} 
+torchrun --nproc_per_node=4 train.py 
+\end{lstlisting} 
+
+where one process is launched for each GPU. 
+
+\subsection{Troubleshooting} 
+
+Verify that Python can see the GPUs: 
+
+\begin{lstlisting} 
+nvidia-smi 
+\end{lstlisting} 
+
+Verify that PyTorch detects CUDA: 
+
+\begin{lstlisting} 
+python -c "import torch; print(torch.cuda.is_available())" 
+\end{lstlisting} 
+
+Expected output: 
+
+\begin{lstlisting} 
+True 
+\end{lstlisting}

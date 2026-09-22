@@ -1,0 +1,193 @@
+\section{Multi-GPU Computing with Julia} 
+
+Many Julia applications can use multiple GPUs simultaneously. Typical examples include: 
+
+\begin{itemize} 
+\item Oceananigans.jl 
+\item MPI-based PDE solvers 
+\item Distributed machine learning 
+\item Large ensemble simulations 
+\end{itemize} 
+
+Multi-GPU programs typically require a CUDA-aware MPI installation. The typical workflow is: 
+
+\begin{enumerate} 
+\item Load CUDA, OpenMPI, and Julia modules. 
+\item Configure MPI.jl to use the system MPI installation. 
+\item Launch Julia using \texttt{mpiexec}. 
+\item Verify that each MPI rank can access a GPU. \end{enumerate} 
+
+\subsection{Loading Required Modules} 
+
+Load the required software: 
+
+\begin{lstlisting} 
+module load cuda/12.3.2 
+module load openmpi/4.1.7-with-cuda 
+module load julia/1.10.8 
+\end{lstlisting} 
+
+Verify that the modules are loaded: 
+
+\begin{lstlisting} 
+module list 
+\end{lstlisting} 
+
+Verify CUDA: 
+
+\begin{lstlisting} 
+nvidia-smi 
+\end{lstlisting} 
+
+Verify MPI: 
+
+\begin{lstlisting} 
+which mpiexec 
+\end{lstlisting}
+
+
+\subsection{Installing Required Julia Packages} 
+
+The examples in this appendix use the following Julia packages: 
+
+\begin{itemize} 
+\item CUDA.jl 
+\item MPI.jl 
+\item MPIPreferences.jl 
+\end{itemize} 
+
+If they are not already installed, start Julia and run: 
+
+
+\begin{lstlisting} 
+using Pkg 
+Pkg.add("CUDA") 
+Pkg.add("MPI") 
+Pkg.add("MPIPreferences") 
+Pkg.add("Oceananigans") 
+\end{lstlisting}
+
+\subsection{Testing CUDA} 
+
+Before testing MPI, verify that Julia can see a CUDA-enabled GPU. Start Julia: 
+
+\begin{lstlisting} 
+julia 
+\end{lstlisting} 
+
+Load CUDA.jl and check for GPUs: 
+
+\begin{lstlisting} 
+using CUDA 
+CUDA.has_cuda_gpu() 
+\end{lstlisting} 
+
+Expected output: 
+
+\begin{lstlisting} 
+true 
+\end{lstlisting} 
+
+You may also display information about the available GPUs: 
+
+\begin{lstlisting} 
+CUDA.devices() 
+\end{lstlisting}
+
+\subsection{Configuring MPI.jl} 
+
+Inside Julia: 
+
+\begin{lstlisting} 
+using MPIPreferences 
+MPIPreferences.use_system_binary() 
+\end{lstlisting} 
+
+Restart Julia and verify: 
+
+\begin{lstlisting} 
+using MPI 
+MPI.versioninfo() 
+\end{lstlisting}
+
+\subsection{Verifying GPU Assignment} 
+
+Create a file called \texttt{test.jl}: 
+
+\begin{lstlisting} 
+using MPI 
+using CUDA 
+MPI.Init() 
+rank = MPI.Comm_rank(MPI.COMM_WORLD) 
+println( "Rank $rank using GPU $(CUDA.device())" ) 
+MPI.Finalize() 
+\end{lstlisting} 
+
+Launch four MPI ranks: 
+
+\begin{lstlisting} 
+mpiexec -n 4 julia test.jl 
+\end{lstlisting}
+
+Expected output: 
+
+\begin{lstlisting} 
+Rank 0 using GPU CuDevice(0) 
+Rank 1 using GPU CuDevice(1) 
+Rank 2 using GPU CuDevice(2) 
+Rank 3 using GPU CuDevice(3) 
+\end{lstlisting}
+
+
+\subsection{Selecting GPUs} 
+
+On a shared server, it is often desirable to restrict a program to a subset of the available GPUs. Before launching a computation, check current GPU usage: 
+
+\begin{lstlisting} 
+nvidia-smi 
+\end{lstlisting} 
+
+You can restrict a program to specific GPUs using \texttt{CUDA\_VISIBLE\_DEVICES}. Use only GPU 0: 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=0 julia script.jl 
+\end{lstlisting} 
+
+Use GPUs 1 and 2: 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=1,2 julia script.jl 
+\end{lstlisting} 
+
+The selected GPUs are re-numbered internally. For example, 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=2 julia script.jl 
+\end{lstlisting} 
+
+makes physical GPU 2 appear as GPU 0 inside Julia. This is useful on shared servers where multiple users may be using GPUs simultaneously. When launching MPI jobs, the same variable can be used: 
+
+\begin{lstlisting} 
+CUDA_VISIBLE_DEVICES=0,1,2,3 mpiexec -n 4 julia test.jl 
+\end{lstlisting} 
+
+Each MPI rank can then be assigned a GPU programmatically.
+
+\subsection{Checking Available GPUs} 
+
+Before launching a large computation, check current GPU usage: 
+
+\begin{lstlisting} 
+nvidia-smi 
+\end{lstlisting} 
+
+This allows you to identify which GPUs are currently in use.
+
+\subsection{Checking Which GPU Julia Is Using} 
+
+Inside Julia: 
+
+\begin{lstlisting} 
+using CUDA 
+CUDA.device() 
+\end{lstlisting}

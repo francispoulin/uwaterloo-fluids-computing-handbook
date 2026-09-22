@@ -1,0 +1,90 @@
+\section{Python Virtual Environments}
+
+Python includes a built-in mechanism for creating isolated environments.
+
+Virtual environments provide many of the same benefits as Conda and are often simpler for Python-only projects.
+
+\subsection{Creating a Virtual Environment}
+
+Create a new environment called \texttt{venv}:
+
+\begin{lstlisting}
+python -m venv venv
+\end{lstlisting}
+
+This creates a directory containing an isolated Python installation.
+
+\subsection{Activating the Environment}
+
+Activate the environment:
+
+\begin{lstlisting}
+source venv/bin/activate
+\end{lstlisting}
+
+Your command prompt should change to indicate that the environment is active.
+
+\subsection{Installing Packages}
+
+Use \texttt{pip} to install packages:
+
+\begin{lstlisting}
+pip install numpy
+\end{lstlisting}
+
+You may verify the installation:
+
+\begin{lstlisting}
+python -c "import numpy"
+\end{lstlisting}
+
+\subsection{Leaving the Environment}
+
+Deactivate the environment:
+
+\begin{lstlisting}
+deactivate
+\end{lstlisting}
+
+\subsection{When Should I Use Conda?}
+
+Conda is often easier when working with:
+
+\begin{itemize}
+\item JupyterLab
+\item CUDA-enabled Python packages
+\item packages with compiled dependencies
+\item mixed Python and non-Python software
+\end{itemize}
+
+\subsection{When Should I Use a Virtual Environment?}
+
+Virtual environments are often a good choice for:
+
+\begin{itemize}
+\item lightweight Python projects
+\item software development
+\item projects using only pip-installed packages
+\end{itemize}
+
+\subsection{Exercise}
+
+Create a virtual environment, install NumPy, verify that it imports successfully, and then deactivate the environment.
+
+One thing I would add
+
+Since your students use HPC systems, add this box at the end:
+
+\subsection{Recommended Practice}
+
+Create a separate environment for each project.
+
+For example:
+
+\begin{lstlisting}
+arctic_project_env
+oceananigans_env
+machine_learning_env
+\end{lstlisting}
+
+Avoid installing large numbers of unrelated packages into a single environment.

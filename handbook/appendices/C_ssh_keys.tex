@@ -1,0 +1,25 @@
+\section{SSH Keys}
+
+SSH keys allow password-free login. 
+
+\subsection{Create a Key Pair} 
+
+\begin{lstlisting} 
+ssh-keygen 
+\end{lstlisting} 
+
+Accept the default location. 
+
+\subsection{Install the Public Key} 
+
+\begin{lstlisting} 
+ssh-copy-id username@pelee.math.private.uwaterloo.ca 
+\end{lstlisting} 
+
+\subsection{Test} 
+
+\begin{lstlisting} 
+ssh username@pelee.math.private.uwaterloo.ca 
+\end{lstlisting} 
+
+You should no longer be asked for a password.

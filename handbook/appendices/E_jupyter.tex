@@ -1,0 +1,29 @@
+\section{Jupyter Notebooks} 
+
+Jupyter allows interactive computing through a web browser. 
+
+\subsection{Start Jupyter} 
+
+\begin{lstlisting} 
+jupyter lab --no-browser 
+\end{lstlisting} 
+
+The server will display a URL and port number. 
+
+\subsection{Create an SSH Tunnel} 
+
+From your laptop: 
+
+\begin{lstlisting} 
+ssh -L 8888:localhost:8888 username@pelee 
+\end{lstlisting} 
+
+\subsection{Open in a Browser} 
+
+Open 
+
+\begin{lstlisting} 
+http://localhost:8888 
+\end{lstlisting} 
+
+in your browser.

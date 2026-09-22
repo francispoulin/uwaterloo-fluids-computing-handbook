@@ -1,0 +1,19 @@
+\section{Transferring Files}
+
+Move files between your laptop and the server using SCP or rsync.
+
+\subsection{SCP}
+
+\begin{lstlisting}
+scp file.txt username@pelee.math.private.uwaterloo.ca:~
+\end{lstlisting}
+
+\subsection{RSYNC}
+
+\begin{lstlisting}
+rsync -av data/ username@pelee.math.private.uwaterloo.ca:data/
+\end{lstlisting}
+
+\subsection{Exercise}
+
+Transfer a small text file and verify the transfer using \texttt{ls}.

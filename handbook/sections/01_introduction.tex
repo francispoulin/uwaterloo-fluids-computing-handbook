@@ -1,0 +1,43 @@
+\section{Introduction}
+
+\subsection{Why Are We Using Servers?}
+
+Most scientific models and datasets are too large to run efficiently on a laptop.
+The Fluids Lab servers, \texttt{Pelee} and \texttt{Rondeau}, provide access to faster CPUs, GPUs, larger memory, and shared storage.
+
+You may think of them as powerful Linux computers that you access remotely.
+
+\begin{center}
+Your Laptop $\longleftrightarrow$ Pelee / Rondeau
+\end{center}
+
+You work from your laptop, but the calculations happen on the server.
+
+\subsection{Important Concepts}
+
+\paragraph{Multi-user systems.}
+Many researchers share the same server.
+
+\paragraph{CPU versus GPU.}
+A CPU is designed for general-purpose computing. A GPU is designed for highly parallel computations.
+
+\paragraph{Home directory.}
+Every user has a home directory:
+
+\begin{lstlisting}
+/home/username
+\end{lstlisting}
+Note: for historical reasons at UWaterloo Math, $/home$ is an alias for $/u$, although they have the same purpose and meaning.
+
+\paragraph{Persistence.}
+Files remain on the server after you log out.
+
+\subsection{Learning Objectives}
+
+\begin{itemize}
+\item connect to Pelee and Rondeau;
+\item navigate the Linux filesystem;
+\item transfer files;
+\item run Python and Julia programs;
+\item monitor resource usage.
+\end{itemize}

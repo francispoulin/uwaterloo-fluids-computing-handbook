@@ -1,0 +1,39 @@
+\section{Good Computing Citizenship}
+
+Pelee and Rondeau are shared resources.
+
+\begin{itemize}
+\item Keep directories organized.
+\item Delete unnecessary files.
+\item Do not monopolize CPUs or GPUs.
+\item Use descriptive file names.
+\item Document your work.
+\end{itemize}
+
+
+\subsection{Storage}
+
+Home directories should only be used for storing small files like text files or code. Large data, such as binary output datasets, should be stored on the large RAID (Redundant Array of Inexpensive Disks) volumes, named 'fsys1' and 'fsys2'. Your folder on these storage volumes can be accessed on either pelee or rondeau by \texttt{cd}'ing to:
+
+\begin{lstlisting}
+    /mnt/autofs/sutton.math/fsys1/username
+    /mnt/autofs/sutton.math/fsys2/username
+\end{lstlisting}
+Replace `username' in the above with your UWaterloo 8-character userid.
+
+\subsection{File Naming}
+
+Avoid:
+
+\begin{lstlisting}
+test
+test2
+test_final
+test_final2
+\end{lstlisting}
+
+Prefer:
+
+\begin{lstlisting}
+arctic_run_2026_09_18
+\end{lstlisting}

@@ -1,0 +1,41 @@
+\section{File Permissions} 
+
+Linux controls who may read, write, and execute files. 
+
+Display permissions: 
+
+\begin{lstlisting} 
+ls -l 
+\end{lstlisting} 
+
+Example: 
+
+\begin{lstlisting} 
+-rwxr-xr-x script.sh 
+\end{lstlisting} 
+
+\subsection{Making a Script Executable} 
+
+\begin{lstlisting} 
+chmod u+x script.sh 
+\end{lstlisting} 
+
+You can then run 
+
+\begin{lstlisting} 
+./script.sh 
+\end{lstlisting} 
+
+\subsection{Useful Commands} 
+
+Give read and write permission to the owner: 
+
+\begin{lstlisting} 
+chmod 600 file.txt 
+\end{lstlisting} 
+
+Make a file executable: 
+
+\begin{lstlisting} 
+chmod 755 script.sh 
+\end{lstlisting}

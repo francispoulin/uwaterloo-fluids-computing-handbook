@@ -1,0 +1,39 @@
+\section{Long-Running Jobs}
+
+Many computations run for hours or days. If your SSH connection is interrupted, the job may stop.
+
+\subsection{Using tmux}
+
+Start a tmux session:
+
+\begin{lstlisting}
+tmux
+\end{lstlisting}
+
+Run your program normally.
+
+\subsection{Detach}
+
+Leave the session running:
+
+\begin{lstlisting}
+Ctrl+b d
+\end{lstlisting}
+
+\subsection{Reconnect}
+
+List sessions:
+
+\begin{lstlisting}
+tmux ls
+\end{lstlisting}
+
+Reconnect:
+
+\begin{lstlisting}
+tmux attach
+\end{lstlisting}
+
+\subsection{Exercise}
+
+Start tmux, run a simple program, detach, and reconnect.
