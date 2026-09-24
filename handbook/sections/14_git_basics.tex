@@ -27,6 +27,41 @@ git push
 git pull
 \end{lstlisting}
 
-\subsection{Exercise}
+\subsection{Exercise} 
 
-Create a repository, modify a file, commit the change, and push it.
+Create a new directory called \texttt{git-practice}: 
+
+\begin{lstlisting} 
+    mkdir git-practice 
+    cd git-practice 
+\end{lstlisting} 
+
+Initialize a Git repository: 
+
+\begin{lstlisting} 
+    git init 
+\end{lstlisting} 
+
+Create a file: 
+
+\begin{lstlisting} 
+    echo "Hello Git" > README.txt 
+\end{lstlisting} 
+
+Add the file: 
+
+\begin{lstlisting} 
+    git add README.txt 
+\end{lstlisting} 
+
+Commit the file: 
+
+\begin{lstlisting} 
+    git commit -m "Initial commit" 
+\end{lstlisting} 
+
+Verify the commit history: 
+
+\begin{lstlisting} 
+    git log --oneline 
+\end{lstlisting}
