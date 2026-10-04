@@ -1,20 +1,33 @@
-\section{Alliance Clusters} 
+\section{Alliance Clusters}
+\label{app:alliance}
 
-The skills learned on Pelee and Rondeau transfer directly to national HPC systems. 
+The skills learned on Pelee and Rondeau transfer directly to the national HPC systems of the
+Digital Research Alliance of Canada (the Alliance). To use them you need an Alliance account
+(\url{https://ccdb.alliancecan.ca}) and multi-factor authentication. You do \emph{not} need the
+university VPN to reach them.
 
-Examples: 
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lp{0.30\textwidth}cl@{}}
+\toprule
+\textbf{Cluster} & \textbf{Location} & \textbf{GPUs/node} & \textbf{Login node} \\
+\midrule
+Nibi     & University of Waterloo (SHARCNET)         & 8 & \texttt{nibi.alliancecan.ca} \\
+Fir      & Simon Fraser University                   & 4 & \texttt{fir.alliancecan.ca} \\
+Rorqual  & École de technologie supérieure, Montréal & 4 & \texttt{rorqual.alliancecan.ca} \\
+Trillium & University of Toronto (SciNet)            & 4 & \texttt{trillium-gpu.alliancecan.ca} \\
+\bottomrule
+\end{tabular}
+\caption{GPU nodes (NVIDIA H100, 80~GB) on four Alliance clusters. Check the Alliance
+documentation for current details. Trillium's CPU nodes use a different login node
+(\texttt{trillium.alliancecan.ca}), and the cluster is run differently from the others, so read
+its documentation before your first job.}
+\end{table}
 
-\begin{itemize} 
-\item Narval 
-\item Béluga 
-\item Cedar 
-\item Graham 
-\end{itemize} 
+Daily tasks remain similar:
 
-Daily tasks remain similar: 
+\begin{lstlisting}
+ssh cd ls tmux git
+\end{lstlisting}
 
-\begin{lstlisting} 
-ssh cd ls tmux git conda 
-\end{lstlisting} 
-
-The major difference is that most large jobs must be submitted through a scheduler.
+The major difference is that large jobs must be submitted through a scheduler (Slurm).

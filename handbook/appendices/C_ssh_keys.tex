@@ -1,25 +1,103 @@
 \section{SSH Keys}
+\label{app:ssh}
 
-SSH keys allow password-free login. 
+SSH keys let you log in without typing a password each time, and they are how GitHub identifies
+you. A key is a pair of files: a \emph{private} key that stays on your computer and must never be
+shared, and a \emph{public} key (ending in \texttt{.pub}) that you give to servers.
 
-\subsection{Create a Key Pair} 
+\subsection{Create a Key Pair}
 
-\begin{lstlisting} 
-ssh-keygen 
-\end{lstlisting} 
+On your own computer:
 
-Accept the default location. 
+\begin{lstlisting}
+ssh-keygen -t ed25519 -C "your_email@uwaterloo.ca"
+\end{lstlisting}
 
-\subsection{Install the Public Key} 
+Accept the default location and choose a passphrase, which protects the private key if someone gets
+the file. Show the public key with:
 
-\begin{lstlisting} 
-ssh-copy-id username@pelee.math.private.uwaterloo.ca 
-\end{lstlisting} 
+\begin{lstlisting}
+cat ~/.ssh/id_ed25519.pub
+\end{lstlisting}
 
-\subsection{Test} 
+To avoid typing the passphrase repeatedly, add the key to the SSH agent (many desktops do this for
+you):
 
-\begin{lstlisting} 
-ssh username@pelee.math.private.uwaterloo.ca 
-\end{lstlisting} 
+\begin{lstlisting}
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+\end{lstlisting}
+
+\subsection{Waterloo Servers (Pelee and Rondeau)}
+
+\begin{lstlisting}
+ssh-copy-id username@pelee.math.private.uwaterloo.ca
+ssh username@pelee.math.private.uwaterloo.ca
+\end{lstlisting}
 
 You should no longer be asked for a password.
+
+\subsection{Alliance Clusters}
+
+The Alliance recommends installing your key through its account portal, not with
+\texttt{ssh-copy-id}: log in to \url{https://ccdb.alliancecan.ca}, open the SSH keys page, and
+paste the content of your \emph{public} key. One upload works for all the Alliance HPC clusters.
+Whether you are still asked for your second factor depends on how the key is set up; see
+\url{https://docs.alliancecan.ca/wiki/SSH_Keys} and the Alliance page on multi-factor
+authentication.
+
+\subsection{GitHub}
+
+\begin{enumerate}
+\item Copy your public key (\texttt{cat \textasciitilde/.ssh/id\_ed25519.pub}).
+\item On GitHub, open Settings $\rightarrow$ SSH and GPG keys $\rightarrow$ New SSH key, paste
+the key, and save.
+\item Test the connection:
+\begin{lstlisting}
+ssh -T git@github.com
+\end{lstlisting}
+You should see a message greeting your GitHub username.
+\end{enumerate}
+
+Clone with the SSH address (\texttt{git@github.com:user/repo.git}), not the \texttt{https}
+address. For a repository that is already cloned with \texttt{https}:
+
+\begin{lstlisting}
+git remote set-url origin git@github.com:user/repo.git
+git remote -v
+\end{lstlisting}
+
+On a cluster, do not copy your private key there. Create a separate key (with a passphrase) on the
+login node and add its public key to GitHub too; GitHub accepts several keys. Most compute nodes
+have no internet access, so run \texttt{git} commands on a login node.
+
+\subsection{A Shortcut File}
+
+Create \texttt{\textasciitilde/.ssh/config} on your computer:
+
+\begin{lstlisting}
+Host pelee
+    HostName pelee.math.private.uwaterloo.ca
+    User username
+
+Host nibi
+    HostName nibi.alliancecan.ca
+    User username
+    ControlMaster auto
+    ControlPath ~/.ssh/cm-%C
+    ControlPersist 1h
+\end{lstlisting}
+
+Now \texttt{ssh nibi} is enough. \texttt{ControlMaster} keeps the first connection open for an
+hour and reuses it, so you answer the multi-factor prompt once, not for every new \texttt{ssh},
+\texttt{scp} or \texttt{sshfs}.
+
+\subsection{If It Does Not Work}
+
+\begin{lstlisting}
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519 ~/.ssh/config
+ssh -v nibi
+\end{lstlisting}
+
+The \texttt{-v} option shows which keys are tried and where the connection fails.

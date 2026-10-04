@@ -30,6 +30,26 @@ Type \texttt{yes} when asked whether you trust the host.
 username@pelee:~$
 \end{lstlisting}
 
+\subsection{Connecting from Off Campus (VPN)}
+
+Pelee and Rondeau are on the campus network, so from off campus you must connect to the
+university VPN first. If \texttt{ssh} hangs and then times out, the most common reason is that the
+VPN is not connected.
+
+The university uses the Cisco Secure Client. Installation differs by operating system and changes
+from time to time, so follow the current instructions from IST:
+
+\begin{center}
+\url{https://uwaterloo.atlassian.net/wiki/spaces/CWKB/pages/1736840329}
+\end{center}
+
+\begin{itemize}
+\item Connect to the VPN \emph{before} running \texttt{ssh}.
+\item In the second-password field, enter your Duo method; \texttt{push} sends a notification to
+the Duo Mobile app.
+\item You do \emph{not} need the VPN for the Alliance clusters (Appendix~\ref{app:alliance}).
+\end{itemize}
+
 \subsection{Logging Out}
 
 \begin{lstlisting}

@@ -14,6 +14,29 @@ scp file.txt username@pelee.math.private.uwaterloo.ca:~
 rsync -av data/ username@pelee.math.private.uwaterloo.ca:data/
 \end{lstlisting}
 
+\subsection{Mounting a Remote Folder with SSHFS}
+
+SSHFS makes a folder on a server appear as an ordinary folder on your Linux computer, so you can
+open and edit remote files with local programs without copying them back and forth. These
+instructions are for Linux (on Ubuntu or Debian: \texttt{sudo apt install sshfs}).
+
+\begin{lstlisting}
+mkdir -p ~/nibi
+sshfs username@nibi.alliancecan.ca:/scratch/username ~/nibi
+ls ~/nibi
+fusermount -u ~/nibi        # unmount when finished
+\end{lstlisting}
+
+If you use the shortcut file of Appendix~\ref{app:ssh} (with \texttt{ControlMaster}), the
+multi-factor prompt appears only for the first connection.
+
+\begin{itemize}
+\item Use a mount for browsing, editing and small files. For large transfers use
+\texttt{rsync} or Globus, and do not run heavy programs on files in a mounted folder.
+\item Unmount when you are done. If a mount hangs after your network changes, use
+\texttt{fusermount -uz \textasciitilde/nibi}.
+\end{itemize}
+
 \subsection{Exercise}
 
 Transfer a small text file and verify the transfer using \texttt{ls}.

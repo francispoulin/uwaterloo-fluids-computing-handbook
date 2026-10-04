@@ -265,3 +265,32 @@ for the Earth-Ocean benchmark.
     \end{verbatim} 
     \item Always specify memory in GPU allocations. 
 \end{itemize}
+
+\subsection{Common Problems}
+
+\paragraph{Julia cannot find my packages, or the wrong Julia starts.}
+Every new shell needs the environment script first (\texttt{source env/nibi.sh}). Check with:
+
+\begin{lstlisting}
+which julia; julia --version; echo $JULIA_DEPOT_PATH
+\end{lstlisting}
+
+You should see Julia 1.10.10 and your depot folder. Another version usually means that old
+\texttt{module load} lines in \texttt{\textasciitilde/.bashrc} are interfering. Keep
+\texttt{.bashrc} minimal and let the environment script load the modules.
+
+\paragraph{Precompilation fails with ``could not spawn''.}
+Two usual causes. (1) A stale \texttt{LD\_LIBRARY\_PATH} set in \texttt{.bashrc} (\texttt{module
+purge} does not remove it): \texttt{echo \$LD\_LIBRARY\_PATH} should print nothing. (2) Login-node
+limits: retry with fewer parallel tasks, or precompile inside an interactive allocation.
+
+\begin{lstlisting}
+JULIA_NUM_PRECOMPILE_TASKS=2 julia --project=. -e 'using Pkg; Pkg.precompile()'
+salloc --account=def-yourpi --cpus-per-task=4 --mem=16G --time=1:00:00
+\end{lstlisting}
+
+\paragraph{A job stays pending.}
+\begin{lstlisting}
+squeue -u $USER --start
+\end{lstlisting}
+shows the estimated start time. Whole-node requests wait longer than small ones.
