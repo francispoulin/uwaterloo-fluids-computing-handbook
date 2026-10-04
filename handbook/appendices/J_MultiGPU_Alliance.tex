@@ -1,0 +1,142 @@
+\section{Multi-GPU Oceananigans on Alliance Clusters}
+\label{app:oceananigans-alliance}
+
+This appendix gets Oceananigans.jl running on the GPUs of the Alliance clusters, from a first test
+job to multi-node runs with CUDA-aware MPI. Everything that can change, such as module versions
+and MPI settings, lives in a tested repository, so the steps here stay short:
+
+\begin{center}
+\url{https://github.com/francispoulin/Oceananigans-DRAC}
+\end{center}
+
+It was tested on Nibi and Fir in October 2026 (Table~\ref{tab:alliance-settings}). New to the
+clusters? Read Appendix~\ref{app:alliance} first, and Appendix~\ref{app:ssh} for logging in with keys.
+
+\subsection{Before You Start}
+
+\begin{itemize}
+\item An Alliance account, multi-factor authentication, and your supervisor's account name
+(written \texttt{def-yourpi} below).
+\item A \emph{minimal} \texttt{\textasciitilde/.bashrc}: no \texttt{module load} lines and no
+\texttt{LD\_LIBRARY\_PATH}. The environment script loads what it needs. Also check that
+\texttt{\textasciitilde/.modulerc} does not exist or pin an old \texttt{StdEnv}.
+\item Install packages on a \emph{login node}: login nodes have internet but no GPUs, so
+\texttt{nvidia-smi} failing there is normal.
+\end{itemize}
+
+\subsection{Get the Code}
+
+\begin{lstlisting}
+cd $SCRATCH
+git clone https://github.com/francispoulin/Oceananigans-DRAC.git
+# or, with a GitHub SSH key (Appendix C):
+# git clone git@github.com:francispoulin/Oceananigans-DRAC.git
+cd Oceananigans-DRAC
+\end{lstlisting}
+
+\subsection{The Environment}
+
+\begin{lstlisting}
+source env/drac.sh
+\end{lstlisting}
+
+This loads the modules (\texttt{StdEnv/2023}, \texttt{gcc}, \texttt{openmpi}, \texttt{cuda},
+\texttt{julia}) and sets the Julia \emph{depot}, the folder where packages and compiled code are
+kept. The default is \texttt{\$SCRATCH/julia\_depot}, because home directories have small quotas.
+To use another folder, set \texttt{JULIA\_DEPOT\_PATH} \emph{before} sourcing the script. Source it in
+every new shell; the repository's job scripts do it for you. The line it prints shows the cluster,
+the repository and the depot, which is the first thing to check when something looks wrong.
+
+\subsection{One-Time Setup}
+
+\begin{lstlisting}
+bash setup/setup.sh
+\end{lstlisting}
+
+This takes 20--30 minutes. It installs the tested package versions and makes both MPI.jl and
+Julia's own OpenMPI use the cluster's CUDA-aware OpenMPI. In its output, the paths for
+\texttt{libmpi} must be under \texttt{/cvmfs}, not in your depot, and there should be no errors.
+
+\subsection{Test Jobs}
+
+\begin{lstlisting}
+sbatch --account=def-yourpi jobs/hello_cpu.sh
+sbatch --account=def-yourpi jobs/hello_gpu.sh
+sbatch --account=def-yourpi --nodes=1 --ntasks-per-node=2 jobs/checks.sh
+\end{lstlisting}
+
+Each job writes a \texttt{.out} file. The hello jobs end with \texttt{hello\_oceananigans: OK}.
+\texttt{checks.sh} prints PASS or FAIL for each check and ends with \texttt{All checks passed}.
+It tests MPI, CUDA-aware communication between GPUs, a distributed run against a single-GPU run,
+and NetCDF and JLD2 output. To test a full node or several nodes, use the settings in
+Table~\ref{tab:alliance-settings}, for example:
+
+\begin{lstlisting}
+sbatch --account=def-yourpi --nodes=2 --ntasks-per-node=4 --mem=0 jobs/checks.sh
+\end{lstlisting}
+
+\subsection{Your Own Scripts}
+
+Copy \texttt{jobs/checks.sh} and replace its loop of checks with your command:
+
+\begin{lstlisting}
+srun julia --project=. my_script.jl
+\end{lstlisting}
+
+Run one MPI rank per GPU (\texttt{--ntasks-per-node} equal to the GPUs you want per node, with
+\texttt{--gpus-per-task=h100:1}). In the Julia script, create the architecture with
+\texttt{arch = Distributed(GPU())}. The scripts in \texttt{checks/} are working examples.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lcll@{}}
+\toprule
+\textbf{Cluster} & \textbf{GPUs/node} & \textbf{Full node} & \textbf{Status} \\
+\midrule
+Nibi     & 8 & \texttt{--nodes=1 --ntasks-per-node=8 --mem=0} & tested \\
+Fir      & 4 & \texttt{--nodes=1 --ntasks-per-node=4 --mem=0} & tested \\
+Rorqual  & 4 & \texttt{--nodes=1 --ntasks-per-node=4 --mem=0} & not yet tested \\
+Trillium & 4 & see its documentation                          & not yet tested \\
+\bottomrule
+\end{tabular}
+\caption{Job settings by cluster (October 2026). For several nodes, increase \texttt{--nodes}.}
+\label{tab:alliance-settings}
+\end{table}
+
+\subsection{Common Problems}
+
+\paragraph{Julia cannot find my packages, or the wrong Julia starts.}
+Every new shell needs \texttt{source env/drac.sh}. Check with:
+
+\begin{lstlisting}
+which julia; julia --version; echo $JULIA_DEPOT_PATH
+\end{lstlisting}
+
+You should see Julia 1.10.10 and your depot folder. Another version usually means that
+\texttt{module load} lines in \texttt{\textasciitilde/.bashrc}, or a \texttt{\textasciitilde/.modulerc}
+that sets an old default \texttt{StdEnv}, are interfering.
+
+\paragraph{Precompilation fails with ``could not spawn''.}
+Two usual causes. (1) An old \texttt{LD\_LIBRARY\_PATH} in \texttt{.bashrc}: \texttt{echo
+\$LD\_LIBRARY\_PATH} should print nothing. (2) Login-node limits: retry with fewer parallel
+tasks, or precompile inside an interactive allocation.
+
+\begin{lstlisting}
+JULIA_NUM_PRECOMPILE_TASKS=2 julia --project=. -e 'using Pkg; Pkg.precompile()'
+salloc --account=def-yourpi --cpus-per-task=4 --mem=16G --time=1:00:00
+\end{lstlisting}
+
+\paragraph{A GPU job fails with ``Out of GPU memory'' on a tiny problem.}
+The GPU may be occupied by another process or in a bad state. Look at the line printed by
+\texttt{hello\_gpu.sh} for the memory in use at the start. Rerun; if it fails again on the same
+node, send the node name and job ID to Alliance support.
+
+\paragraph{A job stays pending.}
+\begin{lstlisting}
+squeue -u $USER --start
+\end{lstlisting}
+shows the estimated start. Whole-node requests wait longer than small ones.
+
+\paragraph{My packages disappeared.}
+Scratch is temporary storage, and unused files are eventually deleted. If your depot is gone,
+source the environment and rerun \texttt{bash setup/setup.sh}.
